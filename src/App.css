@@ -1,0 +1,43 @@
+.main {
+  padding: 20px 0;
+}
+
+.container {
+  padding: 20px;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.image-wrapper {
+  width: 200px;
+  height: auto;
+  overflow: hidden;
+}
+
+.image-wrapper img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.styled-button {
+  display: block;
+  width: 150px;
+  margin: 20px auto;
+}
+
+.styled-card {
+  transition: .2s ease;
+}
+
+.styled-card:hover {
+  transform: scale(1.04);
+}
+
+.current-album {
+  text-align: center;
+  font-size: 20px;
+  padding: 24px 0;
+}

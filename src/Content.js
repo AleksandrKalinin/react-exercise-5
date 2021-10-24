@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback, Fragment} from 'react';
-import { Container, Row, Col, Table, Card, Button } from 'react-bootstrap';
+import { Container, Row, Col, Table, Card, Button, Modal, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAlbums, getPhotos, addAlbum, addPhoto } from './actions/index';
+import Portal from './Portal';
 
 function Content() {
 
@@ -20,6 +21,12 @@ function Content() {
   const [photosShown, openPhotos] = useState(false);
 
   const [currentAlbum, setCurrentAlbum] = useState(null);
+
+  const [isOn, setOn] = useState(false); // toggles button visibility
+
+  const [inputValue, setInputValue] = useState('');
+
+  const [currentFunction, setCurrentFunction] = useState(null);
 
   useEffect(() => {
     setAlbums(albumsList);
@@ -40,21 +47,34 @@ function Content() {
 
   const callFunc = useCallback((item) => showPhotos(item.id), []);  
 
-  const createAlbum = () => {
+  const createAlbum = (name) => {
     const newItem = {};
     newItem.id = albumsList.length + 1;
     newItem.userId = newItem.id;
-    newItem.title = 'New item';
+    newItem.title = name;
     newItem.photos = [];
     dispatch(addAlbum(newItem));
+    setOn(false);
+    setInputValue('');
   }
 
-  const createPhoto = () => {
+  const createPhoto = (name) => {
     const photo = {};
     photo.title = 'Lorem ipsum dolor sit ament';
     photo.url = 'token-image.jpg';
     photo.id = photosList.length + 1;
     dispatch(addPhoto(photo));
+    setOn(false);
+    setInputValue('');
+  }
+
+  const checkExecution = (e) =>{
+    if ( e.target.id === 'albumButton' ) {
+      setCurrentFunction(() => createAlbum);
+    } else {
+      setCurrentFunction(() => createPhoto);
+    }
+    setOn(true);
   }
 
   return (
@@ -79,7 +99,7 @@ function Content() {
                   )}
                   <tr>
                     <td colSpan="2">
-                      <Button onClick={createAlbum} className="styled-button">Add new album</Button>
+                      <Button onClick={checkExecution} id="albumButton" className="styled-button">Add new album</Button>
                     </td>
                   </tr>                      
                 </tbody>
@@ -112,11 +132,32 @@ function Content() {
           </Row>
           <Row>
             <Col md={12} lg={12} xs={12} style={{ justifyContent: 'center' }}>
-              <Button onClick={createPhoto} className="styled-button">Add photo</Button>
+              <Button onClick={checkExecution} id="photoButton" className="styled-button">Add photo</Button>
             </Col>            
           </Row>
         </Fragment>  
       : null }
+      { isOn ? 
+      <Portal>
+        <div className="modal-wrapper">
+          <Modal.Dialog aria-labelledby="contained-modal-title-vcenter" centered >
+            <Modal.Header closeButton>
+              <Modal.Title>Modal title</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <Form>
+                  <Form.Group className="mb-3" controlId="formBasicPassword">
+                    <Form.Label className="form-label">Please add name of an album in the text field below</Form.Label>
+                    <Form.Control key="2233" defaultValue = {inputValue} onChange={(e) => setInputValue(e.target.value)} type="text" placeholder="New item" />
+                  </Form.Group>
+                  <Button variant="primary" className="styled-button" onClick={currentFunction.bind(null, inputValue)} >
+                    Save item
+                  </Button>
+                </Form>
+            </Modal.Body>
+          </Modal.Dialog>          
+        </div>
+      </Portal> : null }
     </Container>
   );
 }

@@ -90,7 +90,7 @@ function Content() {
 
   //useOnClickOutside of modal hook
   const refModal = useRef();  
-  useOnClickOutside(refModal, () => setOn(false));
+  useOnClickOutside(refModal, () => closeModal());
 
   function useOnClickOutside(ref, handler) {
     useEffect(() => {     
@@ -123,10 +123,18 @@ function Content() {
   //useComponentDidUnmount
   function useComponentDidUnmount(callback){
     useEffect(() => {
+
       return () => {
         callback();
       }
     }, [])
+  }
+
+  //close Modal
+
+  const closeModal = () => {
+    setOn(false);
+    setInputValue('');
   }
 
   return (
@@ -199,24 +207,30 @@ function Content() {
         : null }
         { isOn ? 
         <Portal>
-          <div className="modal-wrapper">
-            <Modal.Dialog aria-labelledby="contained-modal-title-vcenter" centered ref={refModal}>
-              <Modal.Header closeButton>
-                <Modal.Title>Modal title</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <Form>
-                  <Form.Group className="mb-3" controlId="formBasicPassword">
-                    <Form.Label className="form-label">Please add name of an album in the text field below</Form.Label>
-                    <Form.Control defaultValue = {inputValue} onChange={(e) => setInputValue(e.target.value)} type="text" placeholder="New item" />
-                  </Form.Group>
-                  <Button variant="primary" className="styled-button" onClick={currentFunction.bind(null, inputValue)} >
-                    Save item
-                  </Button>
-                </Form>
-              </Modal.Body>
-            </Modal.Dialog>          
-          </div>
+          <Modal.Dialog aria-labelledby="contained-modal-title-vcenter" centered ref={refModal}>
+            <Modal.Header>
+              <Modal.Title>{photosShown ? 'Photo' : 'Album'} modal</Modal.Title>
+              <div className="close-icon" onClick={closeModal}>
+                <img src="close.png" />
+              </div>
+            </Modal.Header>
+            <Modal.Body>
+              <Form>
+                <Form.Group className="mb-3" controlId="formBasicPassword">
+                  <Form.Label className="form-label">Please add name of an {photosShown ? 'photo' : 'album'} in the text field below</Form.Label>
+                  <Form.Control defaultValue = {inputValue} onChange={(e) => setInputValue(e.target.value)} type="text" placeholder={photosShown ? 'New photo' : 'New album'} />
+                </Form.Group>
+              </Form>
+            </Modal.Body>
+            <Modal.Footer className="button-group">
+              <Button variant="success" className="styled-button" onClick={closeModal} >
+                Close
+              </Button>                  
+              <Button variant="primary" className="styled-button" onClick={currentFunction.bind(null, inputValue)} >
+                Save item
+              </Button>
+            </Modal.Footer>            
+          </Modal.Dialog>          
         </Portal> : null }
       </Container>
       <div className="footer" ref={refFooter}></div>

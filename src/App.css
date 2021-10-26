@@ -126,3 +126,12 @@ body {
   font-weight: 700;
   font-size: 26px;
 }
+
+.button-group {
+  display: flex;
+}
+
+.close-icon img{
+  width: 27px;
+  height: 27px;
+}
